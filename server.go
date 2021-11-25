@@ -87,19 +87,8 @@ func (s *server) handleIP(format string) http.HandlerFunc {
 
 		resp := s.buildResponse(ip, r, lang)
 
-		switch format {
-		case "yaml":
-			b, err := yaml.Marshal(resp)
-			if err != nil {
-				log.Println(err)
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-
-			w.Header().Set("Content-Type", "text/yaml")
-			fmt.Fprint(w, string(b))
-
-		case "json":
+		switch {
+		case format == "json", r.Header.Get("Accept") == "application/json":
 			b, err := json.MarshalIndent(resp, "", "  ")
 			if err != nil {
 				log.Println(err)
@@ -108,6 +97,16 @@ func (s *server) handleIP(format string) http.HandlerFunc {
 			}
 
 			w.Header().Set("Content-Type", "application/json")
+			fmt.Fprint(w, string(b))
+		case format == "yaml":
+			b, err := yaml.Marshal(resp)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			w.Header().Set("Content-Type", "text/yaml")
 			fmt.Fprint(w, string(b))
 		}
 	}
