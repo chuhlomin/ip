@@ -26,6 +26,11 @@ spec:
             requests:
               cpu: 10m
               memory: 10Mi
+          env:
+            - name: GEOLITE_ASN_PATH
+              value: "/usr/share/GeoLite2/GeoLite2-ASN.mmdb"
+            - name: GEOLITE_CITY_PATH
+              value: "/usr/share/GeoLite2/GeoLite2-City.mmdb"
       imagePullSecrets:
         - name: ghcrcred
 ---

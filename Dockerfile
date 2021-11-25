@@ -7,7 +7,8 @@ RUN go get -d -v ./...
 RUN CGO_ENABLED=0 go build -o /go/bin/app
 
 
-FROM gcr.io/distroless/static:966f4bd97f611354c4ad829f1ed298df9386c2ec
+FROM ghcr.io/chuhlomin/geolite2:latest
+# gcr.io/distroless/static:966f4bd97f611354c4ad829f1ed298df9386c2ec + GeoLite2
 # latest-amd64 -> 966f4bd97f611354c4ad829f1ed298df9386c2ec
 # https://github.com/GoogleContainerTools/distroless/tree/master/base
 
