@@ -5,14 +5,33 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"time"
 
 	"github.com/caarlos0/env/v6"
 	"github.com/oschwald/geoip2-golang"
+	"gopkg.in/yaml.v2"
 )
 
 type config struct {
-	GeoLite2ASNPath  string `env:"GEOLITE_ASN_PATH" envDefault:"GeoLite2/GeoLite2-ASN.mmdb"`
-	GeoLite2CityPath string `env:"GEOLITE_CITY_PATH" envDefault:"GeoLite2/GeoLite2-City.mmdb"`
+	GeoLite2ASNPath  string        `env:"GEOLITE_ASN_PATH" envDefault:"GeoLite2/GeoLite2-ASN.mmdb"`
+	GeoLite2CityPath string        `env:"GEOLITE_CITY_PATH" envDefault:"GeoLite2/GeoLite2-City.mmdb"`
+	WhoisTimeout     time.Duration `env:"WHOIS_TIMEOUT" envDefault:"5s"`
+}
+
+type response struct {
+	IP        string `json:"ip"`
+	UserAgent string `json:"user_agent,omitempty" yaml:"user_agent,omitempty"`
+	ASN       struct {
+		Number       uint   `json:"number,omitempty" yaml:"number,omitempty"`
+		Organization string `json:"org,omitempty" yaml:"org,omitempty"`
+	} `json:"asn,omitempty" yaml:"asn,omitempty"`
+	GeoIP struct {
+		Country     string  `json:"country,omitempty" yaml:"country,omitempty"`
+		CountryName string  `json:"country_name,omitempty" yaml:"country_name,omitempty"`
+		City        string  `json:"city,omitempty" yaml:"city,omitempty"`
+		Lat         float64 `json:"lat,omitempty" yaml:"lat,omitempty"`
+		Lon         float64 `json:"lon,omitempty" yaml:"lon,omitempty"`
+	} `json:"geoip,omitempty" yaml:"geoip,omitempty"`
 }
 
 func getIP(path string) net.IP {
@@ -29,17 +48,46 @@ func getIP(path string) net.IP {
 func digIP(r *http.Request) string {
 	ip := r.Header.Get("X-Forwarded-For")
 	if len(ip) == 0 {
-		ip = r.RemoteAddr
+		return r.RemoteAddr
 	}
 	return ip
 }
 
+func buildResponse(ip net.IP, r *http.Request, lang string) (resp *response) {
+	resp = &response{
+		IP:        ip.String(),
+		UserAgent: r.UserAgent(),
+	}
+
+	if ip != nil {
+		asn, err := dbASN.ASN(ip)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		resp.ASN.Number = asn.AutonomousSystemNumber
+		resp.ASN.Organization = asn.AutonomousSystemOrganization
+
+		city, err := dbCity.City(ip)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		resp.GeoIP.Country = city.Country.IsoCode
+		resp.GeoIP.CountryName = city.Country.Names[lang]
+		resp.GeoIP.City = city.City.Names[lang]
+		resp.GeoIP.Lat = city.Location.Latitude
+		resp.GeoIP.Lon = city.Location.Longitude
+	}
+
+	return
+}
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	ip := getIP(r.URL.Path)
-	s := ip.String()
 	if ip == nil {
-		s = digIP(r)
-		ip = net.ParseIP(s)
+		ip = net.ParseIP(digIP(r))
 		if ip != nil {
 			// redirect to IP
 			w.Header().Set("Location", "/"+ip.String())
@@ -48,41 +96,28 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set("Content-Type", "text/yaml")
-
 	lang := "en"
 	if r.URL.Query().Get("lang") != "" {
 		lang = r.URL.Query().Get("lang")
 	}
 
-	fmt.Fprintf(w, "IP: %v\n", s)
-	fmt.Fprintf(w, "User-Agent: %v\n", r.UserAgent())
+	resp := buildResponse(ip, r, lang)
 
-	if ip != nil {
-		asn, err := dbASN.ASN(ip)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		fmt.Fprintf(w, "ASN: %v\n", asn.AutonomousSystemNumber)
-		fmt.Fprintf(w, "ASN Name: %v\n", asn.AutonomousSystemOrganization)
-
-		city, err := dbCity.City(ip)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		fmt.Fprintf(w, "Country: %v\n", city.Country.IsoCode)
-		fmt.Fprintf(w, "Country Name: %v\n", city.Country.Names[lang])
-		fmt.Fprintf(w, "City: %v\n", city.City.Names[lang])
-		fmt.Fprintf(w, "Latitude: %v\n", city.Location.Latitude)
-		fmt.Fprintf(w, "Longitude: %v\n", city.Location.Longitude)
+	b, err := yaml.Marshal(resp)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	w.Header().Set("Content-Type", "text/yaml")
+	fmt.Fprint(w, string(b))
 }
 
-var dbASN *geoip2.Reader
-var dbCity *geoip2.Reader
+var (
+	dbASN  *geoip2.Reader
+	dbCity *geoip2.Reader
+)
 
 func main() {
 	var err error
