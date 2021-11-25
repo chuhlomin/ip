@@ -15,24 +15,39 @@ type config struct {
 	GeoLite2CityPath string `env:"GEOLITE_CITY_PATH" envDefault:"GeoLite2/GeoLite2-City.mmdb"`
 }
 
-func getIP(r *http.Request) (netIP net.IP) {
-	if ip := r.URL.Path; ip != "/" {
+func getIP(path string) net.IP {
+	if ip := path; ip != "/" {
 		if ip = ip[1:]; len(ip) > 0 {
-			if netIP = net.ParseIP(ip); netIP != nil {
-				return
+			if netIP := net.ParseIP(ip); netIP != nil {
+				return netIP
 			}
 		}
 	}
+	return nil
+}
 
+func digIP(r *http.Request) string {
 	ip := r.Header.Get("X-Forwarded-For")
 	if len(ip) == 0 {
 		ip = r.RemoteAddr
 	}
-
-	return net.ParseIP(ip)
+	return ip
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
+	ip := getIP(r.URL.Path)
+	s := ip.String()
+	if ip == nil {
+		s = digIP(r)
+		ip = net.ParseIP(s)
+		if ip != nil {
+			// redirect to IP
+			w.Header().Set("Location", "/"+ip.String())
+			w.WriteHeader(http.StatusFound)
+			return
+		}
+	}
+
 	w.Header().Set("Content-Type", "text/yaml")
 
 	lang := "en"
@@ -40,8 +55,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		lang = r.URL.Query().Get("lang")
 	}
 
-	ip := getIP(r)
-	fmt.Fprintf(w, "IP: %v\n", ip.String())
+	fmt.Fprintf(w, "IP: %v\n", s)
 	fmt.Fprintf(w, "User-Agent: %v\n", r.UserAgent())
 
 	if ip != nil {
@@ -88,6 +102,11 @@ func main() {
 	}
 
 	http.HandleFunc("/", handler)
+
+	http.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		fmt.Fprintf(w, "User-agent: *\nDisallow: /\n")
+	})
 
 	log.Println("Listening on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
