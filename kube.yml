@@ -35,7 +35,6 @@ metadata:
   name: {{ .app }}
 spec:
   type: ClusterIP
-  externalTrafficPolicy: Local
   selector:
     app: {{ .app }}
   ports:
