@@ -15,7 +15,7 @@ spec:
         app: {{ .app }}
     spec:
       containers:
-        - name: micro
+        - name: {{ .name }}
           image: {{ .image }}
           ports:
             - containerPort: 8080
