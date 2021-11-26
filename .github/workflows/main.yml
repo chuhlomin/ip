@@ -19,6 +19,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17'
+
+      - name: Run tests
+        run: go test -v ./... -timeout=10m -coverprofile=coverage.txt
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 

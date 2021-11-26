@@ -8,3 +8,8 @@ help:
 ## run: runs the Go program
 run:
 	@go run .
+
+.PHONY: test
+## test: runs the Go test suite
+test:
+	@go test -v ./... -timeout=10m -coverprofile=coverage.txt

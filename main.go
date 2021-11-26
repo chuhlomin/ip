@@ -26,12 +26,12 @@ func main() {
 
 	dbASN, err := geoip2.Open(cfg.GeoLite2ASNPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	dbCity, err := geoip2.Open(cfg.GeoLite2CityPath)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	r := chi.NewRouter()
@@ -44,6 +44,7 @@ func main() {
 		router: r,
 		dbASN:  dbASN,
 		dbCity: dbCity,
+		whois:  &WhoisClient{},
 	}
 	srv.routes()
 
