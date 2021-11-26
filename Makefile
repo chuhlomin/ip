@@ -12,4 +12,4 @@ run:
 .PHONY: test
 ## test: runs the Go test suite
 test:
-	@go test -v ./... -timeout=10m -coverprofile=coverage.txt
+	@go test -mod=readonly -v ./... -timeout=10m -coverprofile=coverage.txt
