@@ -12,6 +12,7 @@ import (
 )
 
 type config struct {
+	Port             string        `env:"PORT" envDefault:"8080"`
 	GeoLite2ASNPath  string        `env:"GEOLITE_ASN_PATH" envDefault:"GeoLite2/GeoLite2-ASN.mmdb"`
 	GeoLite2CityPath string        `env:"GEOLITE_CITY_PATH" envDefault:"GeoLite2/GeoLite2-City.mmdb"`
 	WhoisTimeout     time.Duration `env:"WHOIS_TIMEOUT" envDefault:"5s"`
@@ -48,8 +49,8 @@ func main() {
 	}
 	srv.routes()
 
-	log.Printf("Starting server on port %s", "8080")
-	if err := http.ListenAndServe(":8080", srv.router); err != nil {
+	log.Printf("Starting server on port %s", cfg.Port)
+	if err := http.ListenAndServe(":"+cfg.Port, srv.router); err != nil {
 		log.Fatal(err)
 	}
 }
