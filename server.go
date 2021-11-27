@@ -55,10 +55,10 @@ Available endpoints:
   /{ip}/{mask} - displays the IP in binary format, visualizing the mask
 
 Example usage:
-  curl -L http://ip.chuhlomin.com/
-  curl http://ip.chuhlomin.com/1.1.1.1
-  curl http://ip.chuhlomin.com/1.1.1.1/whois
-  curl http://ip.chuhlomin.com/192.168.0.0/24
+  curl -L https://ip.chuhlomin.com/
+  curl https://ip.chuhlomin.com/1.1.1.1
+  curl https://ip.chuhlomin.com/1.1.1.1/whois
+  curl https://ip.chuhlomin.com/192.168.0.0/24
 
 Version: 1.0.0
 Source code: https://github.com/chuhlomin/ip
