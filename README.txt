@@ -27,5 +27,6 @@ License: MIT
 
 Known alternatives:
   https://ifconfig.co
+  https://httpbin.org/ip
   https://ipinfo.io
   https://whatismyipaddress.com
