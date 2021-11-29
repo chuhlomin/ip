@@ -18,5 +18,6 @@ LABEL homepage="https://github.com/chuhlomin/ip"
 LABEL maintainer="Konstantin Chukhlomin <mail@chuhlomin.com>"
 
 COPY --from=build-env /go/bin/app /bin/app
+COPY favicon.ico /
 
 CMD ["/bin/app"]
