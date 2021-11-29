@@ -78,4 +78,7 @@ Known alternatives:
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, "User-agent: *\nDisallow: /\n")
 	})
+	s.router.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./favicon.ico")
+	})
 }

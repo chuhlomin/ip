@@ -19,7 +19,6 @@ type config struct {
 }
 
 func main() {
-	var err error
 	cfg := config{}
 	if err := env.Parse(&cfg); err != nil {
 		log.Fatal(err)
