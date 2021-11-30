@@ -74,7 +74,7 @@ func (s *server) handleIP(format string) http.HandlerFunc {
 				return
 			}
 
-			w.Header().Set("Content-Type", "text/yaml")
+			w.Header().Set("Content-Type", "text/plain")
 			fmt.Fprint(w, string(b))
 		}
 	}
