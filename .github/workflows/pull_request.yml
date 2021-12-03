@@ -1,0 +1,25 @@
+name: pull_request
+
+on: pull_request
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: '^1.17'
+
+      - uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-go-
+
+      - name: Run tests
+        env:
+          GOPROXY: https://athens.chuhlomin.com
+        run: go test -mod=readonly -v ./... -timeout=10m -coverprofile=coverage.txt
