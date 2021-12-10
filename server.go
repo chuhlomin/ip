@@ -31,9 +31,10 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (s *server) routes() {
 	s.router.HandleFunc("/", s.handleIndex())
+	s.router.HandleFunc("/whois", s.handleWhois())
 	s.router.HandleFunc("/{ip:[0-9.]+}json", s.handleIP("json"))
 	s.router.HandleFunc("/{ip:[0-9.]+}", s.handleIP("yaml"))
-	s.router.HandleFunc("/{ip:[0-9.]+}/whois", s.handleWhois())
+	s.router.HandleFunc("/{ip:[0-9.]+}/whois", s.handleIPWhois())
 	s.router.HandleFunc("/{ip:[0-9.]+}/{mask:[0-9]+}", s.handleMask())
 	s.router.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Location", "/help")
@@ -51,6 +52,7 @@ Available endpoints:
   /help - this page
   / - index page, redirects to /{ip}, where {ip} is your IP address
   /{ip} - returns information about the IP address: ASN and GeoIP
+  /whois - redirects to /{ip}/whois if IP is known, otherwise returns 404
   /{ip}/whois - returns the Whois information for the IP address
   /{ip}/{mask} - displays the IP in binary format, visualizing the mask
 

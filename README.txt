@@ -8,6 +8,7 @@ Available endpoints:
   /help - this page
   / - index page, redirects to /{ip}, where {ip} is your IP address
   /{ip} - returns information about the IP address: ASN and GeoIP
+  /whois - redirects to /{ip}/whois if IP is known, otherwise returns 404
   /{ip}/whois - returns the Whois information for the IP address
   /{ip}/{mask} - displays the IP in binary format, visualizing the mask
 
