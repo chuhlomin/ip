@@ -6,11 +6,7 @@ on:
       - main
 
 env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: cluster-1
-  GKE_ZONE: us-central1-c
   DOCKER_IMAGE: ghcr.io/chuhlomin/ip
-  DEPLOYMENT_NAME: ip
 
 jobs:
   main:
@@ -41,17 +37,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.PKG_TOKEN }}
           image_name: ${{ env.DOCKER_IMAGE }}
-          tags: |
-            ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-            ${{ steps.docker_meta.outputs.tags }}
+          tags: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
       - name: Deploy to GKE
         uses: chuhlomin/actions/deploy-gke@main
         with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
-          cluster_name: ${{ env.GKE_CLUSTER }}
-          location: ${{ env.GKE_ZONE }}
+          cluster_name: cluster-1
+          location: us-central1-c
           template_path: kube.yml
           vars: |
             image: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
@@ -59,4 +53,4 @@ jobs:
             issuer: letsencrypt
             app: ip
             name: ip
-          rollout_status_wait: deployment/${{ env.DEPLOYMENT_NAME }}
+          rollout_status_wait: deployment/ip
