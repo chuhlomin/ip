@@ -83,4 +83,7 @@ Known alternatives:
 	s.router.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./favicon.ico")
 	})
+	s.router.HandleFunc("/og.png", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./og.png")
+	})
 }
