@@ -14,7 +14,7 @@ jobs:
         with:
           template: template.json
           result_path: rendered_template.json
-          vars_file: vars.yml
+          vars_path: vars.yml
       
       - name: Check rendered template
         run: cat rendered_template.json
