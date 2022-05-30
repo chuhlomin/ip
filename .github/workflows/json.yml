@@ -1,0 +1,20 @@
+name: pull_request
+
+on: pull_request
+
+jobs:
+  json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Render template
+        uses: chuhlomin/render-template@v1.5
+        with:
+          template: template.json
+          result_path: rendered_template.json
+          vars_file: vars.yml
+      
+      - name: Check rendered template
+        run: cat rendered_template.json
