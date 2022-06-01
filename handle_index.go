@@ -6,7 +6,7 @@ import (
 	"net"
 	"net/http"
 
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func (s *server) handleIndex() http.HandlerFunc {
