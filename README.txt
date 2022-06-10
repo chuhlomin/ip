@@ -27,6 +27,7 @@ License: MIT
 ---
 
 Known alternatives:
+  https://ip.me
   https://ifconfig.co
   https://httpbin.org/ip
   https://ipinfo.io
