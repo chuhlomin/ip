@@ -42,14 +42,14 @@ func TestHandlerIP(t *testing.T) {
 	require.Equal(t, http.StatusOK, w.Code)
 	require.Equal(t, `ip: 1.2.3.4
 asn:
-  number: 123
-  org: AS Organization
+    number: 123
+    org: AS Organization
 geoip:
-  country: US
-  country_name: United States
-  city: City
-  lat: 1
-  lon: 2
+    country: US
+    country_name: United States
+    city: City
+    lat: 1
+    lon: 2
 `, w.Body.String())
 }
 
@@ -177,12 +177,12 @@ func TestHandlerIPSupportLangParameter(t *testing.T) {
 	require.Equal(t, http.StatusOK, w.Code)
 	require.Equal(t, `ip: 1.2.3.4
 asn:
-  number: 123
-  org: AS Organization
+    number: 123
+    org: AS Organization
 geoip:
-  country: US
-  country_name: США
-  lat: 1
-  lon: 2
+    country: US
+    country_name: США
+    lat: 1
+    lon: 2
 `, w.Body.String())
 }
