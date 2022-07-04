@@ -26,8 +26,6 @@ jobs:
           restore-keys: ${{ runner.os }}-go-
 
       - name: Run tests
-        env:
-          GOPROXY: https://athens.chuhlomin.com
         run: go test -mod=readonly -v ./... -timeout=10m -coverprofile=coverage.txt
 
       - name: Build and push to CR
@@ -44,13 +42,13 @@ jobs:
         with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
-          cluster_name: cluster-1
-          location: us-central1-c
-          template_path: kube.yml
+          cluster_name: cluster-east
+          location: us-east4-c
           vars: |
             image: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
             domain: ip.chuhlomin.com
             issuer: letsencrypt
             app: ip
             name: ip
+            replicas: 2
           rollout_status_wait: deployment/ip
