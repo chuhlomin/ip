@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/oschwald/geoip2-golang"
@@ -86,5 +87,18 @@ Known alternatives:
 	})
 	s.router.HandleFunc("/og.png", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./og.png")
+	})
+
+	s.router.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		// check if the request path is a valid IP address
+		ip := net.ParseIP(strings.Trim(r.URL.Path[1:], " /"))
+		if ip == nil {
+			http.Error(w, "Not found", http.StatusNotFound)
+			return
+		}
+
+		// redirect to the IP address page
+		w.Header().Set("Location", "/"+ip.String())
+		w.WriteHeader(http.StatusFound)
 	})
 }
