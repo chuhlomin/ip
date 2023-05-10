@@ -12,9 +12,9 @@ jobs:
       - name: Render template
         uses: chuhlomin/render-template@funcs
         with:
-          template: './.github/assets/pr-comments/success.md'
+          template: ./.github/assets/pr-comments/success.md
           result_path: rendered_template.md
-          timezone: 'America/New_York'
+          timezone: America/New_York
           vars: |
             link: https://github.com
             expire: 2023-08-06T15:08:28Z
