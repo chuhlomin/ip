@@ -1,6 +1,6 @@
 module github.com/chuhlomin/ip
 
-go 1.17
+go 1.20
 
 require (
 	github.com/caarlos0/env/v6 v6.7.2
