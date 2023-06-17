@@ -28,18 +28,18 @@ func TestHandlerIndex(t *testing.T) {
 		},
 		{
 			reqHeaders: map[string]string{
-				"X-Forwarded-For": "[::1]:62993",
+				"X-Forwarded-For": "192.0.2.1:1234",
 			},
 			respCode: http.StatusOK,
-			respBody: "ip: '[::1]:62993'\n",
+			respBody: "ip: 192.0.2.1:1234\n",
 		},
 		{
 			reqHeaders: map[string]string{
-				"X-Forwarded-For": "[::1]:62993",
+				"X-Forwarded-For": "192.0.2.1:1234",
 				"User-Agent":      "curl/7.77.0",
 			},
 			respCode: http.StatusOK,
-			respBody: "ip: '[::1]:62993'\nuser_agent: curl/7.77.0\n",
+			respBody: "ip: 192.0.2.1:1234\nuser_agent: curl/7.77.0\n",
 		},
 	}
 
