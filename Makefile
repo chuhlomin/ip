@@ -7,7 +7,7 @@ help:
 .PHONY: run
 ## run: runs the Go program
 run:
-	@go run .
+	@go run -buildvcs .
 
 .PHONY: test
 ## test: runs the Go test suite

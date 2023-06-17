@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"runtime/debug"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/oschwald/geoip2-golang"
 )
@@ -31,6 +33,8 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *server) routes() {
+	buildRevision, buildTime := buildInfo()
+
 	s.router.HandleFunc("/", s.handleIndex())
 	s.router.HandleFunc("/whois", s.handleWhois())
 	s.router.HandleFunc("/{ip:[0-9.]+}json", s.handleIP("json"))
@@ -38,6 +42,14 @@ func (s *server) routes() {
 	s.router.HandleFunc("/{ip:[0-9.]+}/whois", s.handleIPWhois())
 	s.router.HandleFunc("/{ip:[0-9.]+}/{mask:[0-9]+}", s.handleMask())
 	s.router.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Location", "/help")
+		w.WriteHeader(http.StatusFound)
+	})
+	s.router.HandleFunc("/info", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Location", "/help")
+		w.WriteHeader(http.StatusFound)
+	})
+	s.router.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Location", "/help")
 		w.WriteHeader(http.StatusFound)
 	})
@@ -64,6 +76,8 @@ Example usage:
   curl https://ip.chuhlomin.com/192.168.0.0/24
 
 Version: 1.0.0
+  Revision: %s
+  Build time: %s
 Source code: https://github.com/chuhlomin/ip
 Author: Konstantin Chukhlomin
 License: MIT
@@ -76,7 +90,8 @@ Known alternatives:
   https://httpbin.org/ip
   https://ipinfo.io
   https://whatismyipaddress.com
-`)
+`,
+			buildRevision, buildTime)
 	})
 	s.router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
@@ -101,4 +116,19 @@ Known alternatives:
 		w.Header().Set("Location", "/"+ip.String())
 		w.WriteHeader(http.StatusFound)
 	})
+}
+
+func buildInfo() (revision, time string) {
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, setting := range info.Settings {
+			switch setting.Key {
+			case "vcs.revision":
+				revision = setting.Value
+			case "vcs.time":
+				time = setting.Value
+			}
+		}
+	}
+
+	return
 }

@@ -4,7 +4,7 @@ WORKDIR /go/src/app
 ADD . /go/src/app
 
 RUN go get -d -v ./...
-RUN CGO_ENABLED=0 go build -o /go/bin/app
+RUN CGO_ENABLED=0 go build -buildvcs -o /go/bin/app
 
 
 FROM ghcr.io/chuhlomin/geolite2:latest
