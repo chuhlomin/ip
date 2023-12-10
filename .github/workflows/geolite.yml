@@ -1,0 +1,27 @@
+name: main
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Dockerfile.GeoLite2'
+
+env:
+  DOCKER_IMAGE: ghcr.io/chuhlomin/geolite2
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and push to CR
+        uses: chuhlomin/actions/docker-build-push@main
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.PKG_TOKEN }}
+          image_name: ${{ env.DOCKER_IMAGE }}
+          tags: ${{ env.DOCKER_IMAGE }}:latest
