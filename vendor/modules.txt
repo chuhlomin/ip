@@ -8,7 +8,7 @@ github.com/davecgh/go-spew/spew
 ## explicit; go 1.14
 github.com/go-chi/chi/v5
 github.com/go-chi/chi/v5/middleware
-# github.com/likexian/whois v1.15.1
+# github.com/likexian/whois v1.15.2
 ## explicit; go 1.20
 github.com/likexian/whois
 # github.com/oschwald/geoip2-golang v1.9.0
@@ -28,13 +28,12 @@ github.com/stretchr/objx
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/mock
 github.com/stretchr/testify/require
-# golang.org/x/net v0.14.0
-## explicit; go 1.17
+# golang.org/x/net v0.24.0
+## explicit; go 1.18
 golang.org/x/net/internal/socks
 golang.org/x/net/proxy
-# golang.org/x/sys v0.11.0
-## explicit; go 1.17
-golang.org/x/sys/internal/unsafeheader
+# golang.org/x/sys v0.19.0
+## explicit; go 1.18
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 # gopkg.in/yaml.v3 v3.0.1
