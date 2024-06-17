@@ -20,14 +20,14 @@ func (s *server) handleMask() http.HandlerFunc {
 		m, err := strconv.Atoi(maskParam)
 		if err != nil {
 			msg := fmt.Sprintf("mask is not int: %s", maskParam)
-			log.Printf(msg)
+			log.Print(msg)
 			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
 
 		if m < 0 || m > 32 {
 			msg := fmt.Sprintf("invalid mask: %s", maskParam)
-			log.Printf(msg)
+			log.Print(msg)
 			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
@@ -35,7 +35,7 @@ func (s *server) handleMask() http.HandlerFunc {
 		_, ipv4Net, err := net.ParseCIDR(ipParam + "/" + maskParam)
 		if err != nil {
 			msg := fmt.Sprintf("invalid ip: %s", ipParam)
-			log.Printf(msg)
+			log.Print(msg)
 			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
@@ -58,7 +58,7 @@ func (s *server) handleMask() http.HandlerFunc {
 			p, err := strconv.Atoi(part)
 			if err != nil {
 				msg := fmt.Sprintf("invalid ip: %s", ipParam)
-				log.Printf(msg)
+				log.Print(msg)
 				http.Error(w, msg, http.StatusBadRequest)
 				return
 			}
