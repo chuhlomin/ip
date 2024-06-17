@@ -18,7 +18,6 @@ func (s *server) handleWhois() http.HandlerFunc {
 			return
 		}
 		http.NotFound(w, r)
-		return
 	}
 }
 
