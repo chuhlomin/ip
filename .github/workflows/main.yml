@@ -55,18 +55,10 @@ jobs:
           image_name: ${{ env.DOCKER_IMAGE }}
           tags: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
 
-      - name: Deploy to GKE
-        uses: chuhlomin/actions/deploy-gke@main
+      - name: Deploy
+        uses: chuhlomin/actions/deploy@main
         with:
-          service_account_key: ${{ secrets.GKE_SA_KEY }}
-          project_id: ${{ secrets.GKE_PROJECT }}
-          cluster_name: cluster-east
-          location: us-east4-c
-          vars: |
-            image: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
-            domain: ip.chuhlomin.com
-            issuer: letsencrypt
-            app: ip
-            name: ip
-            replicas: 2
-          rollout_status_wait: deployment/ip
+          server: dev1.chuhlomin.com
+          service: ip
+          tag: ${{ github.sha }}
+          auth: ${{ secrets.DEPLOY_AUTH }}
