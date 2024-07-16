@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/oschwald/geoip2-golang"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -28,7 +27,7 @@ func TestHandlerIP(t *testing.T) {
 	mockGeoLite2.On("City", mock.Anything).Return(city, nil)
 
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		dbASN:  mockGeoLite2,
 		dbCity: mockGeoLite2,
 	}
@@ -55,7 +54,7 @@ geoip:
 
 func TestHandlerIPNoGeoIPDatabases(t *testing.T) {
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		dbASN:  nil,
 		dbCity: nil,
 	}
@@ -72,7 +71,7 @@ func TestHandlerIPNoGeoIPDatabases(t *testing.T) {
 }
 
 func TestHandlerIPJSON(t *testing.T) {
-	srv := server{router: chi.NewRouter()}
+	srv := server{router: http.NewServeMux()}
 	srv.routes()
 
 	req := httptest.NewRequest("GET", "/1.2.3.4.json", nil)
@@ -87,7 +86,7 @@ func TestHandlerIPJSON(t *testing.T) {
 }
 
 func TestHandlerIPJSONAccept(t *testing.T) {
-	srv := server{router: chi.NewRouter()}
+	srv := server{router: http.NewServeMux()}
 	srv.routes()
 
 	req := httptest.NewRequest("GET", "/1.2.3.4", nil)
@@ -108,7 +107,7 @@ func TestHandlerIPGeoIPError(t *testing.T) {
 	mockGeoLite2.On("City", mock.Anything).Return(&geoip2.City{}, fmt.Errorf("City error"))
 
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		dbASN:  mockGeoLite2,
 		dbCity: mockGeoLite2,
 	}
@@ -128,7 +127,7 @@ func TestHandlerIPIncorrectIP(t *testing.T) {
 	mockGeoLite2 := &mockGeoLite2{}
 
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		dbASN:  mockGeoLite2,
 		dbCity: mockGeoLite2,
 	}
@@ -163,7 +162,7 @@ func TestHandlerIPSupportLangParameter(t *testing.T) {
 	mockGeoLite2.On("City", mock.Anything).Return(city, nil)
 
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		dbASN:  mockGeoLite2,
 		dbCity: mockGeoLite2,
 	}

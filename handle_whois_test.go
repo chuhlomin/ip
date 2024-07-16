@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -16,7 +15,7 @@ func TestHandlerWhois(t *testing.T) {
 	mockWhois.On("Query", mock.Anything).Return(`WHOIS RAW RESPONSE`, nil)
 
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		whois:  mockWhois,
 	}
 	srv.routes()
@@ -36,7 +35,7 @@ func TestHandlerWhoisError(t *testing.T) {
 	mockWhois.On("Query", mock.Anything).Return(``, fmt.Errorf("whois error"))
 
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		whois:  mockWhois,
 	}
 	srv.routes()
@@ -52,7 +51,7 @@ func TestHandlerWhoisError(t *testing.T) {
 
 func TestHandlerWhoisNil(t *testing.T) {
 	srv := server{
-		router: chi.NewRouter(),
+		router: http.NewServeMux(),
 		whois:  nil,
 	}
 	srv.routes()

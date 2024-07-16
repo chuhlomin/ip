@@ -4,11 +4,8 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"strings"
-
 	"runtime/debug"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/oschwald/geoip2-golang"
 )
 
@@ -22,7 +19,7 @@ type Whois interface {
 }
 
 type server struct {
-	router chi.Router
+	router *http.ServeMux
 	dbASN  GeoIPReader
 	dbCity GeoIPReader
 	whois  Whois
@@ -36,24 +33,19 @@ func (s *server) routes() {
 	buildRevision, buildTime := buildInfo()
 
 	s.router.HandleFunc("/", s.handleIndex())
-	s.router.HandleFunc("/whois", s.handleWhois())
-	s.router.HandleFunc("/{ip:[0-9.]+}json", s.handleIP("json"))
-	s.router.HandleFunc("/{ip:[0-9.]+}", s.handleIP("yaml"))
-	s.router.HandleFunc("/{ip:[0-9.]+}/whois", s.handleIPWhois())
-	s.router.HandleFunc("/{ip:[0-9.]+}/{mask:[0-9]+}", s.handleMask())
-	s.router.HandleFunc("/about", func(w http.ResponseWriter, r *http.Request) {
+	s.router.HandleFunc("GET /about", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Location", "/help")
 		w.WriteHeader(http.StatusFound)
 	})
-	s.router.HandleFunc("/info", func(w http.ResponseWriter, r *http.Request) {
+	s.router.HandleFunc("GET /info", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Location", "/help")
 		w.WriteHeader(http.StatusFound)
 	})
-	s.router.HandleFunc("/version", func(w http.ResponseWriter, r *http.Request) {
+	s.router.HandleFunc("GET /version", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Location", "/help")
 		w.WriteHeader(http.StatusFound)
 	})
-	s.router.HandleFunc("/help", func(w http.ResponseWriter, r *http.Request) {
+	s.router.HandleFunc("GET /help", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, `ip.chuhlomin.com is a service for finding information about IP addresses.
 
@@ -93,29 +85,20 @@ Known alternatives:
 `,
 			buildRevision, buildTime)
 	})
-	s.router.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
+	s.router.HandleFunc("GET /robots.txt", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		fmt.Fprintf(w, "User-agent: *\nDisallow: /\n")
 	})
-	s.router.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+	s.router.HandleFunc("GET /favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./favicon.ico")
 	})
-	s.router.HandleFunc("/og.png", func(w http.ResponseWriter, r *http.Request) {
+	s.router.HandleFunc("GET /og.png", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./og.png")
 	})
-
-	s.router.NotFound(func(w http.ResponseWriter, r *http.Request) {
-		// check if the request path is a valid IP address
-		ip := net.ParseIP(strings.Trim(r.URL.Path[1:], " /"))
-		if ip == nil {
-			http.Error(w, "Not found", http.StatusNotFound)
-			return
-		}
-
-		// redirect to the IP address page
-		w.Header().Set("Location", "/"+ip.String())
-		w.WriteHeader(http.StatusFound)
-	})
+	s.router.HandleFunc("GET /whois", s.handleWhois())
+	s.router.HandleFunc("GET /{ip}", s.handleIP())
+	s.router.HandleFunc("GET /{ip}/whois", s.handleIPWhois())
+	s.router.HandleFunc("GET /{ip}/{mask}", s.handleMask())
 }
 
 func buildInfo() (revision, time string) {

@@ -5,7 +5,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/require"
 )
 
@@ -41,7 +40,7 @@ XXXXXXXX.XXXXXXXX.XXXXXXXX.XXXXXX
 		},
 	}
 
-	srv := server{router: chi.NewRouter()}
+	srv := server{router: http.NewServeMux()}
 	srv.routes()
 
 	for _, tt := range tests {
@@ -56,7 +55,7 @@ XXXXXXXX.XXXXXXXX.XXXXXXXX.XXXXXX
 }
 
 func TestHandlerMaskInvalidMask(t *testing.T) {
-	srv := server{router: chi.NewRouter()}
+	srv := server{router: http.NewServeMux()}
 	srv.routes()
 
 	req := httptest.NewRequest("GET", "/1.2.3.4/33", nil)
@@ -69,7 +68,7 @@ func TestHandlerMaskInvalidMask(t *testing.T) {
 }
 
 func TestHandlerMaskInvalidCIDR(t *testing.T) {
-	srv := server{router: chi.NewRouter()}
+	srv := server{router: http.NewServeMux()}
 	srv.routes()
 
 	req := httptest.NewRequest("GET", "/256.0.0.0/32", nil)

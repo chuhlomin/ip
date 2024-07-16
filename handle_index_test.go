@@ -5,8 +5,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/stretchr/testify/require"
 )
 
@@ -43,8 +41,8 @@ func TestHandlerIndex(t *testing.T) {
 		},
 	}
 
-	router := chi.NewRouter()
-	router.Use(middleware.RealIP)
+	router := http.NewServeMux()
+	// router.Use(middleware.RealIP)
 	mockGeoLite2 := &mockGeoLite2{}
 	srv := server{
 		router: router,

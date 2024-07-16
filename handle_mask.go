@@ -8,14 +8,13 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-
-	"github.com/go-chi/chi/v5"
 )
 
 func (s *server) handleMask() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ipParam := chi.URLParam(r, "ip")
-		maskParam := chi.URLParam(r, "mask")
+		ipParam := r.PathValue("ip")
+		maskParam := r.PathValue("mask")
+		// todo: check with regex
 
 		m, err := strconv.Atoi(maskParam)
 		if err != nil {

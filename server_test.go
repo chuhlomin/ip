@@ -5,12 +5,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/require"
 )
 
 func TestServerRobotsTXT(t *testing.T) {
-	srv := server{router: chi.NewRouter()}
+	srv := server{router: http.NewServeMux()}
 	srv.routes()
 
 	req := httptest.NewRequest("GET", "/robots.txt", nil)

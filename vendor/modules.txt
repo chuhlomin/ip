@@ -4,10 +4,6 @@ github.com/caarlos0/env/v6
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
-# github.com/go-chi/chi/v5 v5.0.12
-## explicit; go 1.14
-github.com/go-chi/chi/v5
-github.com/go-chi/chi/v5/middleware
 # github.com/likexian/whois v1.15.1
 ## explicit; go 1.20
 github.com/likexian/whois

@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/caarlos0/env/v6"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/oschwald/geoip2-golang"
 )
 
@@ -34,14 +32,8 @@ func main() {
 		log.Println(err)
 	}
 
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.Timeout(60 * time.Second))
-
 	srv := server{
-		router: r,
+		router: http.NewServeMux(),
 		dbASN:  dbASN,
 		dbCity: dbCity,
 		whois:  &WhoisClient{},
@@ -49,7 +41,7 @@ func main() {
 	srv.routes()
 
 	log.Printf("Starting server on port %s", cfg.Port)
-	if err := http.ListenAndServe(":"+cfg.Port, srv.router); err != nil {
+	if err := http.ListenAndServe(":"+cfg.Port, LoggerMiddleware(srv.router)); err != nil {
 		log.Fatal(err)
 	}
 }

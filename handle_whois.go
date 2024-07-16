@@ -5,8 +5,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
 )
 
 func (s *server) handleWhois() http.HandlerFunc {
@@ -29,7 +27,8 @@ func (s *server) handleIPWhois() http.HandlerFunc {
 			return
 		}
 
-		ip := chi.URLParam(r, "ip")
+		ip := r.PathValue("ip")
+		// todo: check with regex
 		whoisRaw, err := s.whois.Query(ip)
 		if err != nil {
 			log.Println(err)

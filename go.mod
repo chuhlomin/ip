@@ -1,10 +1,9 @@
 module github.com/chuhlomin/ip
 
-go 1.20
+go 1.22.5
 
 require (
 	github.com/caarlos0/env/v6 v6.10.1
-	github.com/go-chi/chi/v5 v5.0.12
 	github.com/likexian/whois v1.15.1
 	github.com/oschwald/geoip2-golang v1.9.0
 	github.com/stretchr/testify v1.9.0

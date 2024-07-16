@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-chi/chi/v5"
 	"gopkg.in/yaml.v3"
 )
 
@@ -32,13 +31,16 @@ type response struct {
 	GeoIP     *geoip `json:"geoip,omitempty" yaml:"geoip,omitempty"`
 }
 
-func (s *server) handleIP(format string) http.HandlerFunc {
+func (s *server) handleIP() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ip := chi.URLParam(r, "ip")
-		if format == "json" {
-			// todo: fix regex
-			ip = strings.TrimSuffix(ip, ".")
+		ip := r.PathValue("ip")
+		format := "yaml"
+		if strings.HasSuffix(ip, ".json") {
+			format = "json"
+			ip = strings.TrimSuffix(ip, ".json")
 		}
+
+		// todo: check with regex
 
 		lang := "en"
 		if r.URL.Query().Get("lang") != "" {

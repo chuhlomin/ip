@@ -7,7 +7,7 @@ RUN go get -d -v ./...
 RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags="-w -s" -mod=vendor -buildvcs -o /go/bin/app
 
 
-FROM --platform=${TARGETPLATFORM:-linux/amd64} ghcr.io/chuhlomin/geolite2:latest
+FROM --platform=${TARGETPLATFORM:-linux/amd64} gcr.io/distroless/static:966f4bd97f611354c4ad829f1ed298df9386c2ec
 # gcr.io/distroless/static:966f4bd97f611354c4ad829f1ed298df9386c2ec + GeoLite2
 # latest-amd64 -> 966f4bd97f611354c4ad829f1ed298df9386c2ec
 # https://github.com/GoogleContainerTools/distroless/tree/master/base
