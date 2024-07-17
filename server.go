@@ -18,15 +18,29 @@ type Whois interface {
 	Query(string) (string, error)
 }
 
+type Middleware func(http.Handler) http.Handler
+
 type server struct {
-	router *http.ServeMux
-	dbASN  GeoIPReader
-	dbCity GeoIPReader
-	whois  Whois
+	router     *http.ServeMux
+	middleware []Middleware
+	dbASN      GeoIPReader
+	dbCity     GeoIPReader
+	whois      Whois
+}
+
+func (s *server) AddMiddleware(middleware Middleware) {
+	s.middleware = append(s.middleware, middleware)
 }
 
 func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	s.router.ServeHTTP(w, r)
+	var handler http.Handler
+	handler = s.router
+
+	for _, m := range s.middleware {
+		handler = m(handler)
+	}
+
+	handler.ServeHTTP(w, r)
 }
 
 func (s *server) routes() {

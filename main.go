@@ -38,10 +38,12 @@ func main() {
 		dbCity: dbCity,
 		whois:  &WhoisClient{},
 	}
+	srv.AddMiddleware(RealIPMiddleware)
+	srv.AddMiddleware(LoggerMiddleware)
 	srv.routes()
 
 	log.Printf("Starting server on port %s", cfg.Port)
-	if err := http.ListenAndServe(":"+cfg.Port, LoggerMiddleware(srv.router)); err != nil {
+	if err := http.ListenAndServe(":"+cfg.Port, &srv); err != nil {
 		log.Fatal(err)
 	}
 }
