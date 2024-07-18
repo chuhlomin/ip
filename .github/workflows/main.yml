@@ -54,6 +54,7 @@ jobs:
           password: ${{ secrets.PKG_TOKEN }}
           image_name: ${{ env.DOCKER_IMAGE }}
           tags: ${{ env.DOCKER_IMAGE }}:${{ github.sha }}
+          platforms: linux/arm64
 
       - name: Deploy
         uses: chuhlomin/actions/deploy@main
