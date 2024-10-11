@@ -13,7 +13,7 @@ FROM gcr.io/distroless/static:latest
 LABEL name="ip"
 LABEL repository="https://github.com/chuhlomin/ip"
 LABEL homepage="https://github.com/chuhlomin/ip"
-LABEL maintainer="Konstantin Chukhlomin <mail@chuhlomin.com>"
+LABEL maintainer="Constantine Chukhlomin <mail@chuhlomin.com>"
 
 COPY --from=build-env /go/bin/app /bin/app
 COPY favicon.ico og.png /

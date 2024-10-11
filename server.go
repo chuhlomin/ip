@@ -85,7 +85,7 @@ Version: 1.0.0
   Revision: %s
   Build time: %s
 Source code: https://github.com/chuhlomin/ip
-Author: Konstantin Chukhlomin
+Author: Constantine Chukhlomin
 License: MIT
 
 ---

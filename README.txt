@@ -21,7 +21,7 @@ Example usage:
 
 Version: 1.0.0
 Source code: https://github.com/chuhlomin/ip
-Author: Konstantin Chukhlomin
+Author: Constantine Chukhlomin
 License: MIT
 
 ---
