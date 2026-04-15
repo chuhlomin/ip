@@ -11,7 +11,7 @@ jobs:
 
       - name: Render template
         id: render
-        uses: chuhlomin/render-template/binary@main
+        uses: chuhlomin/render-template/binary@v1.11
         with:
           template: '.github/assets/test-template.md'
           vars: |
