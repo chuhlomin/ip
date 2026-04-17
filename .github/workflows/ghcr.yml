@@ -1,0 +1,21 @@
+name: ghcr
+
+on: pull_request
+
+jobs:
+  ghcr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Render template
+        id: render
+        uses: chuhlomin/render-template@v1.11
+        with:
+          template: '.github/assets/test-template.md'
+          vars: |
+            name: world
+
+      - name: Check result
+        run: echo "${{ steps.render.outputs.result }}"
